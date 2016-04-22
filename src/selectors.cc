@@ -621,16 +621,16 @@ void select_all_matches(SelectionList& selections, const Regex& regex, unsigned 
 
         for (; re_it != re_end; ++re_it)
         {
-            auto begin = ensure_char_start(buffer, (*re_it)[capture].first);
+            auto begin = (*re_it)[capture].first.base();
             if (begin == sel_end)
                 continue;
-            auto end = ensure_char_start(buffer, (*re_it)[capture].second);
+            auto end = (*re_it)[capture].second.base();
 
             CaptureList captures;
             captures.reserve(mark_count);
             for (auto& match : *re_it)
-                captures.push_back(buffer.string(match.first.coord(),
-                                                 match.second.coord()));
+                captures.push_back(buffer.string(match.first.base().coord(),
+                                                 match.second.base().coord()));
 
             result.push_back(
                 keep_direction({ begin.coord(),
@@ -668,17 +668,16 @@ void split_selections(SelectionList& selections, const Regex& regex, unsigned ca
 
         for (; re_it != re_end; ++re_it)
         {
-            BufferIterator end = (*re_it)[capture].first;
+            BufferIterator end = (*re_it)[capture].first.base();
             if (end == buf_end)
                 continue;
 
             if (end != buf_begin)
             {
-                end = ensure_char_start(buffer, end);
                 auto sel_end = (begin == end) ? end : utf8::previous(end, begin);
                 result.push_back(keep_direction({ begin.coord(), sel_end.coord() }, sel));
             }
-            begin = ensure_char_start(buffer, (*re_it)[capture].second);
+            begin = (*re_it)[capture].second.base();
         }
         if (begin.coord() <= sel.max())
             result.push_back(keep_direction({ begin.coord(), sel.max() }, sel));
