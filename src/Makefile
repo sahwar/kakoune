@@ -36,23 +36,23 @@ mandir := $(DESTDIR)$(PREFIX)/share/man/man1
 os := $(shell uname)
 
 ifeq ($(os),Darwin)
-    LIBS += -lncurses -lboost_regex-mt
+    LIBS += -lncurses
     CPPFLAGS += -I/usr/local/opt/ncurses/include
     LDFLAGS += -L/usr/local/opt/ncurses/lib
 else ifeq ($(os),FreeBSD)
-    LIBS += -ltinfow -lncursesw -lboost_regex
+    LIBS += -ltinfow -lncursesw
     CPPFLAGS += -I/usr/local/include
     LDFLAGS += -L/usr/local/lib
 else ifeq ($(os),Haiku)
-    LIBS += -lncursesw -lboost_regex -lnetwork -lbe
+    LIBS += -lncursesw -lnetwork -lbe
 else ifeq ($(os),DragonFly)
-    LIBS += -lncursesw -lboost_regex
+    LIBS += -lncursesw
     CPPFLAGS += -I/usr/local/include
     LDFLAGS += -L/usr/local/lib
 else ifneq (,$(findstring CYGWIN,$(os)))
-    LIBS += -lncursesw -lboost_regex -ldbghelp
+    LIBS += -lncursesw -ldbghelp
 else
-    LIBS += -lncursesw -lboost_regex
+    LIBS += -lncursesw
     CPPFLAGS += -I$(NCURSESW_INCLUDE)
     LDFLAGS += -rdynamic
 endif
