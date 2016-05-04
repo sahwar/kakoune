@@ -51,7 +51,35 @@ struct RegexIterator : std::regex_iterator<RegexUtf8It<Iterator>>
 };
 
 template<typename Iterator>
-using MatchResults = std::match_results<RegexUtf8It<Iterator>>;
+struct MatchResults : std::match_results<RegexUtf8It<Iterator>>
+{
+    using ParentType = std::match_results<RegexUtf8It<Iterator>>;
+    struct SubMatch : std::pair<Iterator, Iterator>
+    {
+        SubMatch() = default;
+        SubMatch(const std::sub_match<RegexUtf8It<Iterator>>& m)
+            : std::pair<Iterator, Iterator>{m.first.base(), m.second.base()},
+              matched{m.matched}
+        {}
+
+        bool matched = false;
+    };
+
+    struct iterator : std::match_results<RegexUtf8It<Iterator>>::iterator
+    {
+        using ParentType = typename std::match_results<RegexUtf8It<Iterator>>::iterator;
+        iterator(const ParentType& it) : ParentType(it) {}
+
+        SubMatch operator*() const { return {ParentType::operator*()}; }
+    };
+
+    iterator begin() const { return {ParentType::begin()}; }
+    iterator cbegin() const { return {ParentType::cbegin()}; }
+    iterator end() const { return {ParentType::end()}; }
+    iterator cend() const { return {ParentType::cend()}; }
+
+    SubMatch operator[](size_t s) const { return {ParentType::operator[](s)}; }
+};
 
 inline RegexConstant::match_flag_type match_flags(bool bol, bool eol, bool eow)
 {

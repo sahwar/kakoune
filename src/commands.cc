@@ -767,9 +767,9 @@ void define_command(const ParametersParser& parser, Context& context, const Shel
         if (regex_match(counts.begin(), counts.end(), res, re))
         {
             if (res[1].matched)
-                min = (size_t)str_to_int({res[1].first.base(), res[1].second.base()});
+                min = (size_t)str_to_int({res[1].first, res[1].second});
             if (res[2].matched)
-                max = (size_t)str_to_int({res[2].first.base(), res[2].second.base()});
+                max = (size_t)str_to_int({res[2].first, res[2].second});
         }
         else
             min = max = (size_t)str_to_int(counts);
